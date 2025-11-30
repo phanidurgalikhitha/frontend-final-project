@@ -10,6 +10,122 @@ import gateway from './gateway.jpg';
 import jantar from './jantar.jpg';
 import victoria from './victoria.jpg';
 
+// Dance images
+import bharatanatyamImg from './assets/bharatanatyam.jpg';
+import kathakImg from './assets/kathak.jpg';
+import bhangraImg from './assets/bhangra.jpg';
+import garbaImg from './assets/garba.jpg';
+
+// Music images
+import hindustaniImg from './assets/hindustani.jpg';
+import carnaticImg from './assets/carnatic.jpg';
+import folkMusicImg from './assets/folkmusic.jpg';
+import bhajanImg from './assets/bhajan.jpg';
+
+// Festival images
+import diwaliImg from './assets/diwali.jpg';
+import holiImg from './assets/holi.jpg';
+import durgaPujaImg from './assets/durgapuja.jpg';
+import onamImg from './assets/onam.jpg';
+
+// Cultural data with video links
+const culturalDances = [
+  {
+    name: 'Bharatanatyam',
+    state: 'Tamil Nadu',
+    style: 'Classical',
+    highlight: 'Temple dance known for expressive hand gestures and strong footwork.',
+    image: bharatanatyamImg,
+    videoUrl: 'https://www.youtube.com/embed/4CKFAb1FNns'
+  },
+  {
+    name: 'Kathak',
+    state: 'Uttar Pradesh',
+    style: 'Classical',
+    highlight: 'Storytelling spins, intricate footwork and graceful expressions.',
+    image: kathakImg,
+    videoUrl: 'https://www.youtube.com/embed/B5Pyq8_ZuJM'
+  },
+  {
+    name: 'Bhangra',
+    state: 'Punjab',
+    style: 'Folk',
+    highlight: 'High‑energy harvest dance performed to loud dhol beats.',
+    image: bhangraImg,
+    videoUrl: 'https://www.youtube.com/embed/ycTlIyQ2MHg'
+  },
+  {
+    name: 'Garba',
+    state: 'Gujarat',
+    style: 'Folk',
+    highlight: 'Circle dance performed during Navratri around a lamp or idol.',
+    image: garbaImg,
+    videoUrl: 'https://www.youtube.com/embed/3X7x4Ye-tqo'
+  }
+];
+
+const culturalMusic = [
+  {
+    name: 'Hindustani Classical',
+    region: 'North India',
+    feature: 'Improvisation on ragas with instruments like sitar, sarod and tabla.',
+    image: hindustaniImg,
+    videoUrl: 'https://www.youtube.com/embed/uEqYzdz3Zvg'
+  },
+  {
+    name: 'Carnatic Classical',
+    region: 'South India',
+    feature: 'Composition‑based kritis with mridangam, veena and violin accompaniment.',
+    image: carnaticImg,
+    videoUrl: 'https://www.youtube.com/embed/Sjg5-2etoZ8'
+  },
+  {
+    name: 'Folk Music',
+    region: 'Various states',
+    feature: 'Local songs celebrating harvests, weddings, seasons and village life.',
+    image: folkMusicImg,
+    videoUrl: 'https://www.youtube.com/embed/1gukvtH_a3I'
+  },
+  {
+    name: 'Devotional Bhajans',
+    region: 'Pan‑India',
+    feature: 'Group singing in temples and homes accompanied by harmonium and dholak.',
+    image: bhajanImg,
+    videoUrl: 'https://www.youtube.com/embed/auSbCogLix4'
+  }
+];
+
+const culturalFestivals = [
+  {
+    name: 'Diwali',
+    month: 'Oct–Nov',
+    theme: 'Festival of Lights celebrating the victory of good over evil.',
+    image: diwaliImg,
+    videoUrl: 'https://www.youtube.com/embed/74LTtXAlT2o'
+  },
+  {
+    name: 'Holi',
+    month: 'March',
+    theme: 'Festival of colours marking the arrival of spring.',
+    image: holiImg,
+    videoUrl: 'https://www.youtube.com/embed/0408HM4MouY'
+  },
+  {
+    name: 'Durga Puja',
+    month: 'Sep–Oct',
+    theme: 'Worship of Goddess Durga with decorated pandals and processions.',
+    image: durgaPujaImg,
+    videoUrl: 'https://www.youtube.com/embed/ew8G5gA_aFk'
+  },
+  {
+    name: 'Onam',
+    month: 'Aug–Sep',
+    theme: 'Harvest festival of Kerala with boat races, feasts and floral rangoli.',
+    image: onamImg,
+    videoUrl: 'https://www.youtube.com/embed/oaSMBo7FYkM'
+  }
+];
+
 function MonumentCard({
   image,
   title,
@@ -111,7 +227,7 @@ function MonumentCard({
   );
 }
 
-// HOME MONUMENTS (with videoUrl)
+// Monuments data (unchanged)
 const homeMonuments = [
   {
     image: tajmahal,
@@ -168,7 +284,6 @@ const homeMonuments = [
   }
 ];
 
-// ALL MONUMENTS (reuse homeMonuments and add others with videoUrl)
 const allMonuments = [
   ...homeMonuments,
   {
@@ -274,27 +389,19 @@ function App() {
   const [virtualDetails, setVirtualDetails] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // login form
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // registered user (persisted)
-  const [registeredEmail, setRegisteredEmail] = useState('');
-  const [registeredPassword, setRegisteredPassword] = useState('');
-
-  // signup form
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupName, setSignupName] = useState('');
 
+  // For culture video modal
+  const [selectedCultureVideo, setSelectedCultureVideo] = useState(null);
+
   useEffect(() => {
-    const savedEmail = localStorage.getItem('heritage_email');
-    const savedPassword = localStorage.getItem('heritage_password');
-    if (savedEmail && savedPassword) {
-      setRegisteredEmail(savedEmail);
-      setRegisteredPassword(savedPassword);
-    }
+    // later: read token from localStorage if you want persistent login
   }, []);
 
   return (
@@ -401,6 +508,24 @@ function App() {
               <li>
                 <button
                   style={{
+                    background: view === 'culture' ? '#fff4e3' : 'transparent',
+                    color: view === 'culture' ? '#f19123' : '#222',
+                    border: 'none',
+                    padding: '8px 22px',
+                    cursor: 'pointer',
+                    fontWeight: 500
+                  }}
+                  onClick={() => {
+                    setVirtualDetails(null);
+                    setView('culture');
+                  }}
+                >
+                  Culture
+                </button>
+              </li>
+              <li>
+                <button
+                  style={{
                     background: view === 'virtual' ? '#fff4e3' : 'transparent',
                     color: view === 'virtual' ? '#f19123' : '#222',
                     border: 'none',
@@ -413,8 +538,6 @@ function App() {
                   Virtual Tours
                 </button>
               </li>
-
-              {/* Logout to the right of Virtual Tours */}
               <li>
                 <button
                   style={{
@@ -547,7 +670,7 @@ function App() {
         </div>
       )}
 
-      {/* Login page */}
+      {/* Login */}
       {view === 'login' && (
         <div
           style={{
@@ -640,14 +763,30 @@ function App() {
                 cursor: 'pointer',
                 marginBottom: '10px'
               }}
-              onClick={() => {
-                if (loginEmail === registeredEmail && loginPassword === registeredPassword) {
+              onClick={async () => {
+                try {
+                  const res = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      email: loginEmail,
+                      password: loginPassword
+                    })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    setLoggedIn(false);
+                    setLoginError(
+                      data.message || 'Invalid email or password. Please try again.'
+                    );
+                    return;
+                  }
                   setLoggedIn(true);
                   setView('home');
                   setLoginError('');
-                } else {
+                } catch (err) {
                   setLoggedIn(false);
-                  setLoginError('Invalid email or password. Please try again.');
+                  setLoginError('Network error, please try again.');
                 }
               }}
             >
@@ -687,7 +826,7 @@ function App() {
         </div>
       )}
 
-      {/* Sign Up page */}
+      {/* Sign Up */}
       {view === 'signup' && (
         <div
           style={{
@@ -798,17 +937,31 @@ function App() {
                 cursor: 'pointer',
                 marginBottom: '10px'
               }}
-              onClick={() => {
+              onClick={async () => {
                 if (!signupEmail || !signupPassword) {
                   alert('Please enter email and password to create an account.');
                   return;
                 }
-                setRegisteredEmail(signupEmail);
-                setRegisteredPassword(signupPassword);
-                localStorage.setItem('heritage_email', signupEmail);
-                localStorage.setItem('heritage_password', signupPassword);
-                alert('Account created successfully!');
-                setView('login');
+                try {
+                  const res = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      name: signupName,
+                      email: signupEmail,
+                      password: signupPassword
+                    })
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    alert(data.message || 'Signup failed');
+                    return;
+                  }
+                  alert('Account created successfully! Now login.');
+                  setView('login');
+                } catch (err) {
+                  alert('Network error, please try again.');
+                }
               }}
             >
               Sign Up
@@ -969,7 +1122,244 @@ function App() {
         </>
       )}
 
-      {/* Virtual Tours with video */}
+      {/* Culture with card-style dances, music, festivals */}
+      {loggedIn && view === 'culture' && (
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '30px auto 40px auto',
+            padding: '10px 20px'
+          }}
+        >
+          <h2
+            style={{
+              fontWeight: 700,
+              fontSize: '2.4rem',
+              textAlign: 'center',
+              color: '#e09f3e',
+              letterSpacing: '2px',
+              marginBottom: '10px'
+            }}
+          >
+            Cultural Heritage of India
+          </h2>
+          <p
+            style={{
+              textAlign: 'center',
+              maxWidth: '800px',
+              margin: '0 auto 28px auto',
+              fontSize: '1.05rem',
+              color: '#555'
+            }}
+          >
+            Explore India&apos;s living culture through classical and folk dances, diverse music
+            traditions, and vibrant festivals.
+          </p>
+
+          {/* Dances as cards */}
+          <h3
+            style={{
+              fontSize: '1.9rem',
+              margin: '0 0 14px 0',
+              color: '#d97706',
+              fontWeight: 700
+            }}
+          >
+            Cultural Dances
+          </h3>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '24px',
+              marginBottom: '40px'
+            }}
+          >
+            {culturalDances.map((d, i) => (
+              <div
+                key={i}
+                style={{
+                  background: '#fff',
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 18px rgba(60,60,60,0.11)',
+                  width: '260px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: d.videoUrl ? 'pointer' : 'default'
+                }}
+                onClick={() => {
+                  if (d.videoUrl) {
+                    setSelectedCultureVideo({ title: d.name, videoUrl: d.videoUrl });
+                  }
+                }}
+              >
+                {d.image && (
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    style={{ width: '100%', height: '170px', objectFit: 'cover' }}
+                  />
+                )}
+                <div style={{ padding: '16px 18px 14px 18px' }}>
+                  <div
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      color: '#222',
+                      marginBottom: 6
+                    }}
+                  >
+                    {d.name}
+                  </div>
+                  <div style={{ color: '#e09f3e', fontWeight: 600, marginBottom: 6 }}>
+                    {d.state} • {d.style}
+                  </div>
+                  <div style={{ fontSize: '0.98rem', color: '#333', marginBottom: 8 }}>
+                    {d.highlight}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Music as cards */}
+          <h3
+            style={{
+              fontSize: '1.9rem',
+              margin: '0 0 14px 0',
+              color: '#15803d',
+              fontWeight: 700
+            }}
+          >
+            Cultural Music
+          </h3>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '24px',
+              marginBottom: '40px'
+            }}
+          >
+            {culturalMusic.map((m, i) => (
+              <div
+                key={i}
+                style={{
+                  background: '#fff',
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 18px rgba(60,60,60,0.11)',
+                  width: '260px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: m.videoUrl ? 'pointer' : 'default'
+                }}
+                onClick={() => {
+                  if (m.videoUrl) {
+                    setSelectedCultureVideo({ title: m.name, videoUrl: m.videoUrl });
+                  }
+                }}
+              >
+                {m.image && (
+                  <img
+                    src={m.image}
+                    alt={m.name}
+                    style={{ width: '100%', height: '170px', objectFit: 'cover' }}
+                  />
+                )}
+                <div style={{ padding: '16px 18px 14px 18px' }}>
+                  <div
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      color: '#222',
+                      marginBottom: 6
+                    }}
+                  >
+                    {m.name}
+                  </div>
+                  <div style={{ color: '#15803d', fontWeight: 600, marginBottom: 6 }}>
+                    {m.region}
+                  </div>
+                  <div style={{ fontSize: '0.98rem', color: '#333', marginBottom: 8 }}>
+                    {m.feature}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Festivals as cards */}
+          <h3
+            style={{
+              fontSize: '1.9rem',
+              margin: '0 0 14px 0',
+              color: '#2563eb',
+              fontWeight: 700
+            }}
+          >
+            Traditional Festivals
+          </h3>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '24px',
+              marginBottom: '20px'
+            }}
+          >
+            {culturalFestivals.map((f, i) => (
+              <div
+                key={i}
+                style={{
+                  background: '#fff',
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 18px rgba(60,60,60,0.11)',
+                  width: '260px',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: f.videoUrl ? 'pointer' : 'default'
+                }}
+                onClick={() => {
+                  if (f.videoUrl) {
+                    setSelectedCultureVideo({ title: f.name, videoUrl: f.videoUrl });
+                  }
+                }}
+              >
+                {f.image && (
+                  <img
+                    src={f.image}
+                    alt={f.name}
+                    style={{ width: '100%', height: '170px', objectFit: 'cover' }}
+                  />
+                )}
+                <div style={{ padding: '16px 18px 14px 18px' }}>
+                  <div
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      color: '#222',
+                      marginBottom: 6
+                    }}
+                  >
+                    {f.name}
+                  </div>
+                  <div style={{ color: '#2563eb', fontWeight: 600, marginBottom: 6 }}>
+                    {f.month}
+                  </div>
+                  <div style={{ fontSize: '0.98rem', color: '#333', marginBottom: 8 }}>
+                    {f.theme}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Virtual Tours */}
       {loggedIn && view === 'virtual' && virtualDetails && (
         <div
           style={{
@@ -1089,6 +1479,60 @@ function App() {
           <p style={{ fontSize: '1.05rem', color: '#2466a6' }}>
             Stay tuned for immersive digital experiences!
           </p>
+        </div>
+      )}
+
+      {/* Culture video modal */}
+      {selectedCultureVideo && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}
+          onClick={() => setSelectedCultureVideo(null)}
+        >
+          <div
+            style={{ width: '80%', maxWidth: '800px', background: '#000', borderRadius: '10px' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '8px 12px',
+                color: '#fff',
+                alignItems: 'center'
+              }}
+            >
+              <span>{selectedCultureVideo.title}</span>
+              <button
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '1.4rem',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setSelectedCultureVideo(null)}
+              >
+                ×
+              </button>
+            </div>
+            <iframe
+              width="100%"
+              height="450"
+              src={selectedCultureVideo.videoUrl}
+              title={selectedCultureVideo.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
         </div>
       )}
     </div>
